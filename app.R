@@ -3,13 +3,12 @@ library(leaflet)
 library(shiny)
 
 wms <- "https://kartta.hel.fi/ws/geoserver/avoindata/wms"
-o <- 0.5
 years <- c("1749", "1780", "1917", "1932", "1943", "1956", "1964", "1976", "1988")
 
 ui <- fluidPage(
   
   tags$h2(
-    HTML("<span style='color:sienna'>Historical maps of Kulosaari</span>")
+    HTML("<span style='color:sienna'>Historical views of Kulosaari</span>")
   ),
   
   tags$head(
@@ -36,8 +35,7 @@ ui <- fluidPage(
                 value = 0.6),
     selectInput(inputId = "year",
                 label = "Year",
-                choices = years,
-                selected = NULL),
+                choices = years),
     width = 2
   ),
   mainPanel(
@@ -61,7 +59,7 @@ server <- function(input, output, session) {
   })
   
   output$map <- renderLeaflet(
-    leaflet() %>% 
+    leaflet(options = leafletOptions(zoomSnap = 0.25, zoomDelta = 0.25)) %>% 
       setView(lng = 25.0051, lat = 60.1865, zoom = 13) 
    )
   
@@ -81,12 +79,12 @@ server <- function(input, output, session) {
     } else {
       leafletProxy("map") %>%
         clearTiles() %>% 
-        setView(25.0070, 60.1863, zoom = 15) %>%
+        setView(lng = 25.0051, lat = 60.1865, zoom = 14.25) %>% 
         addTiles() %>% 
         addTiles(
           urlTemplate = "http://tuijasonkkila.fi/tiles/kulo/{z}/{x}/{y}.png",
-          attribution = 'OpenStreetMap | City of Helsinki | @ttso',
-          options = tileOptions(tms = TRUE, opacity = input$o))    }
+          options = tileOptions(tms = TRUE, opacity = input$o))    
+      }
   })
   
   
